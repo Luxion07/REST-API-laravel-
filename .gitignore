@@ -1,3 +1,4 @@
+
 /node_modules
 /public/hot
 /public/storage
@@ -11,6 +12,8 @@ npm-debug.log
 yarn-error.log
 .env
 ### Laravel template
+=======
+
 vendor/
 node_modules/
 npm-debug.log
@@ -31,4 +34,3 @@ Homestead.json
 
 # Rocketeer PHP task runner and deployment package. https://github.com/rocketeers/rocketeer
 .rocketeer/
-
