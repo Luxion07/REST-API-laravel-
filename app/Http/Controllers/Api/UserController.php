@@ -26,10 +26,10 @@ class UserController extends Controller
     public function getAll()
     {
 		$users = User::all();
-		foreach ( $users as $user ) {
-			$user['register date'] = $user->created_at->format('d M Y');
-		}
-		return response()->json($users);
+       return response()->json($users);
+
+
+
     }
 
 
@@ -79,12 +79,14 @@ class UserController extends Controller
 	public function updateCurrentUser(Request $request)
 	{
 		$user = Auth::user();
-		$user->name = $request['name'];
-		$user->email = $request['email'];
+//		$user->name = $request['name'];
+//		$user->email = $request['email'];
+		$user->fill(['name' => $request['name'], 'email' => $request['email']]);
 
 		if ( ! $request['password'] == '')
 		{
-			$user->password = bcrypt($request['password']);
+//			$user->password = bcrypt($request['password']);
+			$user->fill(['password' => bcrypt($request['password'])]);
 		}
 		$success['message'] = 'User has been updated';
 		$success['user-info'] = $user;

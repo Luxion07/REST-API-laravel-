@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\User;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Validator;
+use App\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends Controller
 {
@@ -50,9 +52,28 @@ class RegisterController extends Controller
         return Validator::make($data, [
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6|confirmed',
+//            'password' => 'required|string|min:6|confirmed',
+            'password'   => 'required',
+            'c_password' => 'required|same:password',
         ]);
     }
+
+	public function register(Request $request)
+	{
+//		$this->validator($request->all())->validate();
+		$validator = $this->Validator($request->all());
+		if ($validator->fails()) {
+			return response()->json( $validator->errors() );
+		}
+		event(new Registered($user = $this->create($request->all())));
+
+		$this->guard()->login($user);
+		if ( $user ) {
+			return response()->json( [ 'success' => 'Yes' ] );
+		}
+
+		return response()->json( [ 'error' => 'Cant register' ] );
+	}
 
     /**
      * Create a new user instance after a valid registration.
@@ -62,10 +83,12 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
+
+         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
         ]);
+
     }
 }

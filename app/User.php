@@ -17,7 +17,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'image_source'
+        'name', 'email', 'password', 'image_source', 'register_date'
     ];
 
     /**
@@ -34,6 +34,15 @@ class User extends Authenticatable
 	{
 		return $this->morphMany('App\Like', 'likeable');
 	}
+//    public function getRegisterDateAttribute()
+//    {
+//       return $this->attributes['register_date'] == 'yes';
+//    }
+    protected $appends = ['register_date'];
 
+    public function getRegisterDateAttribute($value)
+    {
+        return $this->created_at->format('d M Y');
+    }
 
 }

@@ -17,14 +17,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 	return $request->user();
 });
 
-Route::post('register', 'Api\PassportController@register');
-
-Route::post('login', 'Api\PassportController@login');
-Route::post('logout', 'Api\PassportController@logout');
-
 Route::post('get-all-users', 'Api\UserController@getAll');
 
-
+Auth::routes();
 
 Route::group(['middleware' => 'auth:api'], function(){
 	Route::post('get-user', 'Api\UserController@getCurrentUser');
@@ -32,7 +27,24 @@ Route::group(['middleware' => 'auth:api'], function(){
 	Route::get('{id}/like-user', 'Api\UserController@LikeUser');
 	Route::get('get-user-by-id/{id}', 'Api\UserController@getUser');
 
+
 });
 
+Route::get('connect', function (Request $request) {
+	$http = new GuzzleHttp\Client;
+	$response = $http->post('http://rest-api.webdill.com/oauth/token', [
+		'form_params' => [
+			'grant_type' => 'password',
+			'client_id' => 1,
+			'client_secret' => 'UfW3BCX520pLE7isTsm2JFXT0cQqcXyTFsaiyWNb',
+			'username' => $request->username,
+			'password' => $request->password,
+			'scope' => '',
+		],
+	]);
+
+	return json_decode((string) $response->getBody(), true);
+
+});
 
 
